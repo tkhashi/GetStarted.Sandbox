@@ -1,3 +1,4 @@
 prefix_rule(pattern=["git", "checkout", "001-taskflow-time-blocking"], decision="allow")
 prefix_rule(pattern=["git", "-C", "../..", "checkout", "001-taskflow-time-blocking"], decision="allow")
 prefix_rule(pattern=["git", "-C", "../..", "checkout", "-b", "001-taskflow-time-blocking"], decision="allow")
+prefix_rule(pattern=[".specify/scripts/bash/check-prerequisites.sh", "--json", "--require-tasks", "--include-tasks"], decision="allow")

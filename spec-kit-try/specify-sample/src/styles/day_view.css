@@ -1,0 +1,20 @@
+.day-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day-view-empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.day-view-item {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--accent-weak);
+}

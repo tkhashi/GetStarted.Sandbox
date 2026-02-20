@@ -1,31 +1,12 @@
+notify = ["bash", "/Users/kazuhiro.takahashi/Documents/.codex/notify_macos.sh"]
+
 [projects."/Users/kazuhiro.takahashi/Documents/work/GetStarted.Sandbox/spec-kit-try/specify-sample"]
 # model = "gpt-5.3-codex"
 
-[projects."/Users/kazuhiro.takahashi/Documents/work/taisei-document-portal-docs"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/work/taisei-document-portal-back"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github/dp-guest-mention"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github/vivaldi-icon-maker"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github/mlit-dpf-mcp"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github/fastapi-setup"]
-trust_level = "trusted"
-
-[projects."/Users/kazuhiro.takahashi/Documents/github/accessable-stations"]
-trust_level = "trusted"
-
 [projects."/Users/kazuhiro.takahashi/Documents/work/GetStarted.Sandbox/spec-kit-try"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/work/GetStarted.Sandbox"]
 trust_level = "trusted"
 
 # [mcp_servers.mlit-dpf-mcp]
