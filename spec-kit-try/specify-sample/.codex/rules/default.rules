@@ -2,3 +2,8 @@ prefix_rule(pattern=["git", "checkout", "001-taskflow-time-blocking"], decision=
 prefix_rule(pattern=["git", "-C", "../..", "checkout", "001-taskflow-time-blocking"], decision="allow")
 prefix_rule(pattern=["git", "-C", "../..", "checkout", "-b", "001-taskflow-time-blocking"], decision="allow")
 prefix_rule(pattern=[".specify/scripts/bash/check-prerequisites.sh", "--json", "--require-tasks", "--include-tasks"], decision="allow")
+prefix_rule(pattern=["npm", "install"], decision="allow")
+prefix_rule(pattern=["npm", "test"], decision="allow")
+prefix_rule(pattern=["npx", "vitest", "run"], decision="allow")
+prefix_rule(pattern=["npm", "run", "test:e2e"], decision="allow")
+prefix_rule(pattern=["npx", "playwright", "install"], decision="allow")

@@ -233,3 +233,202 @@
 +- 2026-02-20: quickstart 手順を確認（環境要件のみ記載、実行は未実施）
 *** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
 2026-02-20T04:56:08.881860Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"python - <<'PY'\nfrom pathlib import Path\npath = Path('specs/001-taskflow-time-blocking/tasks.md')\ntext = path.read_text()\ntext = text.replace('- [ ] T', '- [x] T')\npath.write_text(text)\nPY"} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:11.175849Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm install","sandbox_permissions":"require_escalated","justification":"Do you want to install npm dependencies to run the tests?","prefix_rule":["npm","install"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:27.127031Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm test","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to run unit tests with npm test?","prefix_rule":["npm","test"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:36.140430Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: package.json
+@@
+   "devDependencies": {
+     "@playwright/test": "^1.42.1",
+     "eslint": "^9.6.0",
+     "fake-indexeddb": "^5.0.2",
++    "jsdom": "^24.0.0",
+     "prettier": "^3.2.5",
+     "vite": "^5.2.0",
+     "vitest": "^1.5.0"
+   }
+ }
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:40.096041Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm install","sandbox_permissions":"require_escalated","justification":"Do you want to install the added jsdom dependency?","prefix_rule":["npm","install"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:47.853665Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm test","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to rerun unit tests now that jsdom is installed?","prefix_rule":["npm","test"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:57:54.038378Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":22095,"chars":"q","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:58:00.011656Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"pkill -f vitest || true"} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:58:12.010432Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: src/app/storage/db.js
+@@
+ export const withStore = async (storeName, mode, handler) => {
+   const db = await openDb()
+   return new Promise((resolve, reject) => {
+     const tx = db.transaction(storeName, mode)
+     const store = tx.objectStore(storeName)
+-    const result = handler(store)
+-    tx.oncomplete = () => resolve(result)
++    const request = handler(store)
++    const isRequest =
++      request && typeof request === 'object' && 'onsuccess' in request && 'onerror' in request
++    const requestPromise = isRequest
++      ? new Promise((res, rej) => {
++          request.onsuccess = () => res(request.result)
++          request.onerror = () => rej(request.error)
++        })
++      : Promise.resolve(request)
++    tx.oncomplete = () => {
++      requestPromise.then(resolve).catch(reject)
++    }
+     tx.onerror = () => reject(tx.error)
+   })
+ }
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T04:58:17.991582Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npx vitest run","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to run the unit tests in run mode (non-watch)?","prefix_rule":["npx","vitest","run"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:00:00.249993Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":71617,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:00:07.221534Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm run test:e2e","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to run the Playwright E2E tests?","prefix_rule":["npm","run","test:e2e"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:00:19.827107Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":39891,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:00:43.277581Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npx playwright install","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to download Playwright browsers for E2E tests?","prefix_rule":["npx","playwright","install"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:00:52.416746Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":5226,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:00.663111Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":5226,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:14.077767Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":5226,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:23.962636Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":5226,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:32.487769Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm run test:e2e","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to rerun Playwright E2E tests after browser installation?","prefix_rule":["npm","run","test:e2e"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:38.361334Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":70432,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:46.057880Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/task_flow.spec.js
+@@
+ test('can create and complete a task', async ({ page }) => {
+   await page.goto('/')
+   await page.getByLabel('タイトル').fill('買い物')
+-  await page.getByRole('button', { name: '追加' }).click()
++  await page
++    .locator('form', { hasText: 'タスクを追加' })
++    .getByRole('button', { name: '追加' })
++    .click()
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:01:54.290703Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/time_block_flow.spec.js
+@@
+ test('can create and edit a time block', async ({ page }) => {
+   await page.goto('/')
+   await page.getByLabel('タイトル').fill('集中作業')
+-  await page.getByRole('button', { name: '追加' }).click()
++  await page
++    .locator('form', { hasText: 'タスクを追加' })
++    .getByRole('button', { name: '追加' })
++    .click()
+@@
+   await page.getByLabel('開始').fill('09:00')
+   await page.getByLabel('終了').fill('10:00')
+-  await page.getByRole('button', { name: '追加' }).click()
++  await page
++    .locator('form', { hasText: 'タイムブロック' })
++    .getByRole('button', { name: '追加' })
++    .click()
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:02:03.715241Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/day_adjust_flow.spec.js
+@@
+ test('can adjust day plan', async ({ page }) => {
+   await page.goto('/')
+   await page.getByLabel('タイトル').fill('レビュー')
+-  await page.getByRole('button', { name: '追加' }).click()
++  await page
++    .locator('form', { hasText: 'タスクを追加' })
++    .getByRole('button', { name: '追加' })
++    .click()
+@@
+   await page.getByLabel('タスク').selectOption({ label: 'レビュー' })
+   await page.getByLabel('開始').fill('13:00')
+   await page.getByLabel('終了').fill('14:00')
+-  await page.getByRole('button', { name: '追加' }).click()
++  await page
++    .locator('form', { hasText: 'タイムブロック' })
++    .getByRole('button', { name: '追加' })
++    .click()
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:02:07.922630Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm run test:e2e","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to rerun Playwright E2E tests after fixing the locators?","prefix_rule":["npm","run","test:e2e"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:02:15.198648Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":51526,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:02:59.523982Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: src/components/time_block_item.js
+@@
+ export const renderTimeBlockEditor = ({ block, onSave }) => {
+   const wrapper = document.createElement('div')
+   wrapper.className = 'time-block-item'
++  const startId = `edit-start-${block.id}`
++  const endId = `edit-end-${block.id}`
+ 
+   wrapper.innerHTML = `
+     <div class="time-block-header">
+       <div>編集</div>
+     </div>
+     <div class="form-row">
+-      <label>開始</label>
+-      <input type="time" name="startTime" value="${block.startTime}" required />
++      <label for="${startId}">開始</label>
++      <input id="${startId}" type="time" name="startTime" value="${block.startTime}" required />
+     </div>
+     <div class="form-row">
+-      <label>終了</label>
+-      <input type="time" name="endTime" value="${block.endTime}" required />
++      <label for="${endId}">終了</label>
++      <input id="${endId}" type="time" name="endTime" value="${block.endTime}" required />
+     </div>
+     <button class="button" type="button">保存</button>
+   `
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:04.125820Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/task_flow.spec.js
+@@
+-  await expect(page.getByText('買い物')).toBeVisible()
++  await expect(page.locator('.task-list').getByText('買い物')).toBeVisible()
+@@
+-  await expect(page.getByText('完了')).toBeVisible()
++  await expect(page.locator('.task-list').getByText('完了')).toBeVisible()
+ })
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:13.696825Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/time_block_flow.spec.js
+@@
+   await page
+     .locator('form', { hasText: 'タイムブロック' })
+     .getByRole('button', { name: '追加' })
+     .click()
+ 
+   await expect(page.getByText('09:00 - 10:00')).toBeVisible()
+   await page.getByRole('button', { name: '編集' }).click()
+-  await page.getByLabel('開始').fill('09:30')
++  const editor = page.locator('.time-block-item')
++  await editor.getByLabel('開始').fill('09:30')
+   await page.getByRole('button', { name: '保存' }).click()
+   await expect(page.getByText('09:30 - 10:00')).toBeVisible()
+ })
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:19.797011Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/day_adjust_flow.spec.js
+@@
+   await page
+     .locator('form', { hasText: 'タイムブロック' })
+     .getByRole('button', { name: '追加' })
+     .click()
+ 
+   await page.getByRole('button', { name: '編集' }).click()
+-  await page.getByLabel('開始').fill('14:30')
+-  await page.getByLabel('終了').fill('15:00')
++  const editor = page.locator('.time-block-item')
++  await editor.getByLabel('開始').fill('14:30')
++  await editor.getByLabel('終了').fill('15:00')
+   await page.getByRole('button', { name: '保存' }).click()
+   await expect(page.getByText('14:30 - 15:00')).toBeVisible()
+ })
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:23.853598Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm run test:e2e","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to rerun Playwright E2E tests after the UI/editor fixes?","prefix_rule":["npm","run","test:e2e"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:30.299551Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":62011,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:40.815688Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: apply_patch *** Begin Patch
+*** Update File: tests/integration/task_flow.spec.js
+@@
+   await page.getByRole('button', { name: '完了にする' }).click()
+-  await expect(page.locator('.task-list').getByText('完了')).toBeVisible()
++  await expect(
++    page.locator('.task-list .task-status').getByText('完了', { exact: true })
++  ).toBeVisible()
+ })
+*** End Patch thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:44.844650Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: exec_command {"cmd":"npm run test:e2e","yield_time_ms":1000,"sandbox_permissions":"require_escalated","justification":"Do you want to rerun the E2E tests after fixing the remaining locator?","prefix_rule":["npm","run","test:e2e"]} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d
+2026-02-20T05:03:49.472958Z  INFO session_loop{thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d}: codex_core::stream_events_utils: ToolCall: write_stdin {"session_id":41063,"chars":"","yield_time_ms":1000} thread_id=019c7930-7929-7e03-861e-f8e1d1dc563d

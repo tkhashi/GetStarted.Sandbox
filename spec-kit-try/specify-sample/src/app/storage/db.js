@@ -27,8 +27,18 @@ export const withStore = async (storeName, mode, handler) => {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(storeName, mode)
     const store = tx.objectStore(storeName)
-    const result = handler(store)
-    tx.oncomplete = () => resolve(result)
+    const request = handler(store)
+    const isRequest =
+      request && typeof request === 'object' && 'onsuccess' in request && 'onerror' in request
+    const requestPromise = isRequest
+      ? new Promise((res, rej) => {
+          request.onsuccess = () => res(request.result)
+          request.onerror = () => rej(request.error)
+        })
+      : Promise.resolve(request)
+    tx.oncomplete = () => {
+      requestPromise.then(resolve).catch(reject)
+    }
     tx.onerror = () => reject(tx.error)
   })
 }
