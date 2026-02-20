@@ -1,0 +1,257 @@
+openapi: 3.0.3
+info:
+  title: TaskFlow Local API
+  version: 1.0.0
+  description: Client-side data access contract for tasks and time blocks.
+servers:
+  - url: /api
+paths:
+  /tasks:
+    get:
+      summary: List tasks
+      responses:
+        '200':
+          description: Task list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      summary: Create task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /tasks/{taskId}:
+    get:
+      summary: Get task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+    put:
+      summary: Update task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+    delete:
+      summary: Delete task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Deleted
+  /time-blocks:
+    get:
+      summary: List time blocks
+      parameters:
+        - in: query
+          name: date
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Time block list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeBlock'
+    post:
+      summary: Create time block
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeBlockCreate'
+      responses:
+        '201':
+          description: Created time block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeBlock'
+  /time-blocks/{timeBlockId}:
+    get:
+      summary: Get time block
+      parameters:
+        - $ref: '#/components/parameters/TimeBlockId'
+      responses:
+        '200':
+          description: Time block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeBlock'
+    put:
+      summary: Update time block
+      parameters:
+        - $ref: '#/components/parameters/TimeBlockId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeBlockUpdate'
+      responses:
+        '200':
+          description: Updated time block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeBlock'
+    delete:
+      summary: Delete time block
+      parameters:
+        - $ref: '#/components/parameters/TimeBlockId'
+      responses:
+        '204':
+          description: Deleted
+components:
+  parameters:
+    TaskId:
+      in: path
+      name: taskId
+      required: true
+      schema:
+        type: string
+    TimeBlockId:
+      in: path
+      name: timeBlockId
+      required: true
+      schema:
+        type: string
+  schemas:
+    Task:
+      type: object
+      required: [id, title, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [todo, done]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TaskCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [todo, done]
+        priority:
+          type: string
+          enum: [low, medium, high]
+    TimeBlock:
+      type: object
+      required: [id, taskId, date, startTime, endTime, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        taskId:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        overlapWarning:
+          type: boolean
+          description: True when overlaps exist on the same date
+    TimeBlockCreate:
+      type: object
+      required: [taskId, date, startTime, endTime]
+      properties:
+        taskId:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'
+    TimeBlockUpdate:
+      type: object
+      properties:
+        taskId:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'
+        endTime:
+          type: string
+          pattern: '^\\d{2}:\\d{2}$'

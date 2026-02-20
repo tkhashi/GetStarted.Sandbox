@@ -1,0 +1,41 @@
+[projects."/Users/kazuhiro.takahashi/Documents/work/GetStarted.Sandbox/spec-kit-try/specify-sample"]
+# model = "gpt-5.3-codex"
+
+[projects."/Users/kazuhiro.takahashi/Documents/work/taisei-document-portal-docs"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/work/taisei-document-portal-back"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github/dp-guest-mention"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github/vivaldi-icon-maker"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github/mlit-dpf-mcp"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github/fastapi-setup"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/github/accessable-stations"]
+trust_level = "trusted"
+
+[projects."/Users/kazuhiro.takahashi/Documents/work/GetStarted.Sandbox/spec-kit-try"]
+trust_level = "trusted"
+
+# [mcp_servers.mlit-dpf-mcp]
+# command = "/Users/kazuhiro.takahashi/Documents/github/mlit-dpf-mcp/.venv/bin/python3"
+# args = [ "-m", "src.server" ]
+
+# [mcp_servers.mlit-dpf-mcp.env]
+# MLIT_API_KEY = "F_3gfzftsNCGZ32U9XC7llsUWbXbiQJh"
+# MLIT_BASE_URL = "https://www.mlit-data.jp/api/v1/"
+# PYTHONUNBUFFERED = "1"
+# LOG_LEVEL = "WARNING"
+# PYTHONPATH = "/Users/kazuhiro.takahashi/Documents/github/mlit-dpf-mcp"
+
